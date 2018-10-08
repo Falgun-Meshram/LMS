@@ -34,6 +34,8 @@ public class admin extends JFrame {
     JLabel endDateLabel;
     JPanel reportPanel;
     JLabel comboLabel;
+    JLabel noLeaveApplications ;
+
     GroupLayout reportPanelLayout;
 
 
@@ -63,6 +65,7 @@ public class admin extends JFrame {
 //        model.addColumn("aid");
 //        model.addColumn("sid");
 //        model.addColumn("staff_id");
+
         approveLeaveArray = new int[100];
         rejectLeaveArray = new int[100];
         leaveTable = new JTable();
@@ -146,6 +149,11 @@ public class admin extends JFrame {
         jMenuBar1.add(jMenu1);
         setJMenuBar(jMenuBar1);
 
+        noLeaveApplications = new JLabel();
+
+        noLeaveApplications.setText("No leave Applications to be processed");
+        noLeaveApplications.setFont(new Font("Roboto Mono", Font.PLAIN, 24));
+
         startDateLabel.setText("Start Date");
         startDateLabel.setFont(new Font("Roboto Mono", Font.PLAIN, 24));
 
@@ -169,6 +177,7 @@ public class admin extends JFrame {
             }
         });
 
+
         rejectLeaveButton.setFont(new Font("Roboto Mono", Font.PLAIN, 24));
         rejectLeaveButton.setBackground(Color.DARK_GRAY);
         rejectLeaveButton.setForeground(Color.WHITE);
@@ -187,43 +196,65 @@ public class admin extends JFrame {
             Statement st = conn.createStatement();
             ResultSet res = st.executeQuery("Select * from LeaveDetails where status = 'P'");
 
+            if (!res.next()){
+
+                System.out.println("Inside if");
+
+                mainPanel.setBorder(BorderFactory.createCompoundBorder(new EtchedBorder(), new EmptyBorder(25, 25, 25, 25)));
+                GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
+                mainPanel.setLayout(mainPanelLayout);
+
+                mainPanelLayout.setHorizontalGroup(
+                        mainPanelLayout.createSequentialGroup()
+                                .addComponent(noLeaveApplications, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                );
+                mainPanelLayout.setVerticalGroup(
+                        mainPanelLayout.createSequentialGroup()
+                                .addComponent(noLeaveApplications, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 
 
-            table = new JTable(writeResult(res,false)){
-                @Override
-                public Class getColumnClass(int column) {
-                    switch (column) {
-                        case 0:
-                            return Object.class;
-                        case 1:
-                            return Object.class;
-                        case 2:
-                            return Object.class;
-                        case 3:
-                            return Object.class;
-                        case 4:
-                            return Object.class;
-                        default:
-                            return Object.class;
+                );
+
+            } else {
+
+                res.previous();
+
+                table = new JTable(writeResult(res, false)) {
+                    @Override
+                    public Class getColumnClass(int column) {
+                        switch (column) {
+                            case 0:
+                                return Object.class;
+                            case 1:
+                                return Object.class;
+                            case 2:
+                                return Object.class;
+                            case 3:
+                                return Object.class;
+                            case 4:
+                                return Object.class;
+                            default:
+                                return Object.class;
+                        }
                     }
-                }
-                @Override
-                public boolean isCellEditable(int row, int col){
-                System.out.println("Is cell editable called for row " + row + "and col " + col);
-                    return col == 5;
-                }
 
-            };
-            createCheckBoxArray(count);
-            table.getModel().addTableModelListener(tableModelEvent -> {
-                tableChanged(tableModelEvent);
-            });
-            table.setFont(new Font("Roboto Mono", Font.PLAIN, 24));
-            table.getTableHeader().setFont(new Font("Roboto Mono", Font.PLAIN, 24));
-            table.setRowHeight(40);
-            table.setFillsViewportHeight(true);
-            table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(generateBox()));
-            table.setColumnSelectionAllowed(true);
+                    @Override
+                    public boolean isCellEditable(int row, int col) {
+                        System.out.println("Is cell editable called for row " + row + "and col " + col);
+                        return col == 5;
+                    }
+
+                };
+                createCheckBoxArray(count);
+                table.getModel().addTableModelListener(tableModelEvent -> {
+                    tableChanged(tableModelEvent);
+                });
+                table.setFont(new Font("Roboto Mono", Font.PLAIN, 24));
+                table.getTableHeader().setFont(new Font("Roboto Mono", Font.PLAIN, 24));
+                table.setRowHeight(40);
+                table.setFillsViewportHeight(true);
+                table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(generateBox()));
+                table.setColumnSelectionAllowed(true);
 //            table.getColumn("Approve Leave").setCellRenderer(new MyTableCellRenderer());
 //            table.getColumn("Reject Leave").setCellRenderer(new MyTableCellRenderer());
 
@@ -232,51 +263,53 @@ public class admin extends JFrame {
 //            mainScrollPanel.add(new JScrollPane(table));
 //            mainPanel.add(table);
 
-            mainPanel.setBorder(BorderFactory.createCompoundBorder( new EtchedBorder(),new EmptyBorder(25,25,25,25)));
-            GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
-            mainPanel.setLayout(mainPanelLayout);
+                mainPanel.setBorder(BorderFactory.createCompoundBorder(new EtchedBorder(), new EmptyBorder(25, 25, 25, 25)));
+                GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
+                mainPanel.setLayout(mainPanelLayout);
 
 //            mainPanelLayout.setAutoCreateGaps(true);
 //            mainPanelLayout.setAutoCreateContainerGaps(true);
-            mainPanelLayout.setHorizontalGroup(
-                    mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER, false)
-                    .addGap(20,20,20)
-                    .addComponent(table.getTableHeader())
-                    .addComponent(table, 0,GroupLayout.DEFAULT_SIZE, Integer.MAX_VALUE)
+                mainPanelLayout.setHorizontalGroup(
+                        mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER, false)
+                                .addGap(20, 20, 20)
+                                .addComponent(table.getTableHeader())
+                                .addComponent(table, 0, GroupLayout.DEFAULT_SIZE, Integer.MAX_VALUE)
 //                    .addGroup(mainPanelLayout.createSequentialGroup()
 //                            .addGap(20,20,20)
 //                            .addComponent(table, 200,400, Integer.MAX_VALUE)
 //                            .addGap(20,20,20)
 //                    )
-                    .addGap(20,20,20)
-                    .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(grantLeaveButton)
-                                .addGap(20,20,20)
-                                .addComponent(rejectLeaveButton)
-                                .addGap(500,500,500)
-                        )
-                    )
+                                .addGap(20, 20, 20)
+                                .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addGroup(mainPanelLayout.createSequentialGroup()
+                                                .addComponent(grantLeaveButton)
+                                                .addGap(20, 20, 20)
+                                                .addComponent(rejectLeaveButton)
+                                                .addGap(500, 500, 500)
+                                        )
+                                )
 
-            );
-            mainPanelLayout.setVerticalGroup(
-                    mainPanelLayout.createSequentialGroup()
-                    .addGap(20,20,20)
-                    .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                );
+                mainPanelLayout.setVerticalGroup(
+                        mainPanelLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 //                            .addGap(20,20,20)
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(table.getTableHeader())
-                                .addComponent(table, 0,GroupLayout.DEFAULT_SIZE, Integer.MAX_VALUE)
-                            )
-                            .addGap(20,20,20)
-                     )
-                    .addGap(20,20,20)
-                    .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(grantLeaveButton)
-                        .addGap(20,20,20)
-                        .addComponent(rejectLeaveButton)
-                    )
-            );
+                                                .addGroup(mainPanelLayout.createSequentialGroup()
+                                                        .addComponent(table.getTableHeader())
+                                                        .addComponent(table, 0, GroupLayout.DEFAULT_SIZE, Integer.MAX_VALUE)
+                                                )
+                                                .addGap(20, 20, 20)
+                                )
+                                .addGap(20, 20, 20)
+                                .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(grantLeaveButton)
+                                        .addGap(20, 20, 20)
+                                        .addComponent(rejectLeaveButton)
+                                )
+                );
+
+            }
 
             reportPanel.setBorder(BorderFactory.createCompoundBorder( new EtchedBorder(),new EmptyBorder(25,25,25,25)));
             reportPanelLayout = new GroupLayout(reportPanel);
@@ -394,21 +427,29 @@ public class admin extends JFrame {
                 String s1="select * from LeaveDetails l where l.designation='S' and (('"+sdate+"'>l.startdate && '"+edate+"'<l.endDate) or ('"+edate+"'>=l.startdate && '"+edate+"'<l.endDate) or ('"+sdate+"'>=l.startdate && '"+sdate+"'<=l.endDate));";
                 Statement s=conn.createStatement();
                 ResultSet res=s.executeQuery(s1);
-                res.next();
-                System.out.println("Res is " + res.getString(1));
+                if(res.next())
                 new summary(res);
+                else{
+                    JOptionPane.showMessageDialog(this, "No leave applications in the selected time frame");
+                }
             }
             else if(jComboBox1.getSelectedItem().equals("Faculty"))
             {
 
-            }
-            else
-            {
+                String s1="select * from LeaveDetails l where l.designation='F' and (('"+sdate+"'>l.startdate && '"+edate+"'<l.endDate) or ('"+edate+"'>=l.startdate && '"+edate+"'<l.endDate) or ('"+sdate+"'>=l.startdate && '"+sdate+"'<=l.endDate));";
+                Statement s=conn.createStatement();
+                ResultSet res=s.executeQuery(s1);
+                if(res.next())
+                    new summary(res);
+                else{
+                    JOptionPane.showMessageDialog(this, "No leave applications in the selected time frame");
+                }
 
             }
 
 
         } catch (ParseException e) {
+            JOptionPane.showMessageDialog(this, "Enter the correct Date in the format YYYY-MM-DD");
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
