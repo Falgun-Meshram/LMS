@@ -145,7 +145,7 @@ public class login extends javax.swing.JFrame   {
              public void actionPerformed(java.awt.event.ActionEvent evt) {
                  try {
                      jButton2ActionPerformed(evt);
-                 } catch (SQLException e) {
+                 } catch (SQLException | NumberFormatException e) {
                      JOptionPane.showMessageDialog(jPanel1, "Login Unsuccessful! Please try again!! ");
                      e.printStackTrace();
                  }
@@ -260,7 +260,7 @@ public class login extends javax.swing.JFrame   {
             String pwd =  String.valueOf(jTextField4.getPassword());
             System.out.println("Login id is " + loginId + "pwd is: " + pwd);
             Statement st = conn.createStatement();
-            ResultSet res = st.executeQuery("select l.login_id from Login l inner join Person p on l.login_id = p.pid where l.pwd ='" + pwd + "' and l.login_id=" + loginId + " and p.sid is not null;");
+            ResultSet res = st.executeQuery("select l.login_id from Login l inner join Person p on l.login_id = p.pid where l.pwd ='" + pwd + "' and l.login_id=" + loginId + " and p.sid is not null ;");
             res.next();
             System.out.println("Logging student user");
             if(res.getString(1) != null ){
