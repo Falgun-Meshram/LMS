@@ -352,7 +352,7 @@ class mysqlConnector implements Runnable {
         String dbname = "falgun";
         String driver = "com.mysql.jdbc.Driver";
         String username = "root";
-        String password = "Mocroscope@911";
+        String password = "EnterPasswordHere";
 
         try {
 
